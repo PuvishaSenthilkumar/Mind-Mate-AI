@@ -1,6 +1,5 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
-
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
@@ -13,8 +12,6 @@ from app import safety
 from app.routers import auth, mood, journal, habits, chat, activities, dashboard, debug
 from app import models  # noqa: F401  registers tables so create_all works
 
-FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -24,6 +21,7 @@ async def lifespan(app: FastAPI):
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
+        import time
         request_id = str(int(time.time() * 1000))
         request.state.request_id = request_id
         start = time.time()
@@ -107,11 +105,11 @@ def safety_info():
     }
 
 
+FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+
+
 @app.get("/{full_path:path}", include_in_schema=False)
 async def spa_fallback(full_path: str):
-    """Serve the built frontend (single-service deploy): anything that is not
-    an API route falls through to the SPA, with index.html for client-side
-    routing."""
     if not FRONTEND_DIST.exists():
         return JSONResponse({"detail": "Not Found"}, status_code=404)
     target = FRONTEND_DIST / full_path
