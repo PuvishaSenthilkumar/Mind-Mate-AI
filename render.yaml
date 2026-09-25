@@ -2,19 +2,17 @@ services:
   - type: web
     name: mindmate-ai
     runtime: python
-    repo: https://github.com/PuvishaSenthilkumar/Mind-Mate-AI
-    plan: free
     rootDir: backend
-    region: oregon
-    healthCheckPath: /api/health
-    buildCommand: cd ../frontend && npm install && npm run build
+    plan: free
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: JWT_SECRET_KEY
-        value: J6agZmZBu6ggIenWgxBp_RYssX_6pSykvsKMyIRhp0iTeANqaIO_NEwQCsm9FQfN
       - key: ENVIRONMENT
         value: production
       - key: AI_PROVIDER
         value: mock
+      - key: FRONTEND_ORIGIN
+        sync: false
       - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET_KEY
         sync: false
