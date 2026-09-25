@@ -111,8 +111,7 @@ def send_email_otp(email: str, otp_code: str, purpose: str = "verify") -> bool:
         return True
     except Exception as exc:
         print(f"[EMAIL ERROR] Failed to send OTP email to {email}: {exc}")
-        if settings.ENVIRONMENT == "development":
-            print(f"[DEV OTP] To: {email} | Subject: {subject} | OTP: {otp_code}")
+        print(f"[DEV OTP] To: {email} | Subject: {subject} | OTP: {otp_code}")
         return False
 
 
