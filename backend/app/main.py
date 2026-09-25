@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -8,9 +9,13 @@ from app.database import Base, engine
 from app.config import settings
 from app import safety
 from app.routers import auth, mood, journal, habits, chat, activities, dashboard, debug
+from app import models  # noqa: F401  registers tables so create_all works
 
-# Note: In production, use Alembic migrations instead of create_all
-# To initialize DB with Alembic: alembic upgrade head
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
 
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
@@ -57,6 +62,7 @@ app = FastAPI(
     title="MindMate AI",
     description="Mental wellness companion API. Not a medical device or diagnostic tool.",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 if settings.ENVIRONMENT == "development":
