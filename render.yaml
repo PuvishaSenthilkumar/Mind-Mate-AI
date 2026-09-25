@@ -1,17 +1,15 @@
 services:
   - type: web
     name: mindmate-ai
-    runtime: python
-    rootDir: backend
+    runtime: docker
+    repo: https://github.com/PuvishaSenthilkumar/Mind-Mate-AI
     plan: free
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    region: oregon
     envVars:
       - key: ENVIRONMENT
         value: production
       - key: AI_PROVIDER
         value: mock
-      - key: FRONTEND_ORIGIN
-        sync: false
       - key: DATABASE_URL
         sync: false
       - key: JWT_SECRET_KEY
